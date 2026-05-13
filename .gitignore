@@ -1,1 +1,4 @@
 .superpowers/
+
+# Local Netlify folder
+.netlify
