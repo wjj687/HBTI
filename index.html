@@ -1,0 +1,1497 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HBTI 豪度测验</title>
+  <style>
+    :root {
+      --ink: #171717;
+      --paper: #fff7db;
+      --cream: #f5ecd0;
+      --green: #d8f35a;
+      --blue: #95d4ff;
+      --pink: #ffb7dc;
+      --red: #ff4d2e;
+      --white: #fffdf2;
+      --shadow: 7px 7px 0 var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255, 77, 46, .22), transparent 22rem),
+        radial-gradient(circle at 86% 18%, rgba(149, 212, 255, .34), transparent 23rem),
+        linear-gradient(transparent 31px, rgba(23, 23, 23, .08) 32px),
+        linear-gradient(90deg, transparent 31px, rgba(23, 23, 23, .08) 32px),
+        var(--cream);
+      background-size: auto, auto, 32px 32px, 32px 32px, auto;
+      padding: 20px;
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      border: 4px solid var(--ink);
+      border-radius: 8px;
+      background: var(--paper);
+      box-shadow: 10px 10px 0 var(--ink);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-start;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 4px solid var(--ink);
+      background: var(--green);
+      font-weight: 900;
+    }
+
+    .brand { font-size: 22px; }
+
+    main { padding: 24px; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(54px, 10vw, 108px);
+      line-height: .9;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h3 { margin: 0; font-size: 24px; }
+    p { line-height: 1.65; }
+
+    .lead {
+      max-width: 620px;
+      margin: 18px 0 0;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 13px 18px;
+      background: var(--blue);
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 5px 5px 0 var(--ink);
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .btn:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .btn.secondary { background: var(--white); }
+    .btn.danger { background: var(--red); color: white; }
+
+    .note {
+      border: 3px dashed var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: white;
+      font-weight: 900;
+      transform: rotate(-1deg);
+    }
+
+    .figure-card {
+      position: relative;
+      min-height: 360px;
+      border: 4px solid var(--ink);
+      border-radius: 12px;
+      background: var(--pink);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .figure-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(transparent 23px, rgba(23, 23, 23, .12) 24px),
+        linear-gradient(90deg, transparent 23px, rgba(23, 23, 23, .12) 24px);
+      background-size: 24px 24px;
+    }
+
+    .figure-card.has-image .figure {
+      display: none;
+    }
+
+    .hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.08) contrast(1.05);
+      z-index: 1;
+    }
+
+    .figure {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      width: 185px;
+      height: 260px;
+      transform: translateX(-50%);
+      border: 4px solid white;
+      border-radius: 22px;
+      background: #101010;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .hood {
+      position: absolute;
+      top: 28px;
+      left: 42px;
+      width: 94px;
+      height: 104px;
+      border: 3px solid white;
+      border-radius: 54px 54px 28px 28px;
+      background: #202020;
+    }
+
+    .mask {
+      position: absolute;
+      top: 88px;
+      left: 55px;
+      width: 70px;
+      height: 30px;
+      border: 3px solid white;
+      border-radius: 0 0 20px 20px;
+      background: #020202;
+    }
+
+    .body {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: -10px;
+      height: 140px;
+      border: 3px solid white;
+      border-radius: 52px 52px 0 0;
+      background: #191919;
+    }
+
+    .deck {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      bottom: 32px;
+      height: 26px;
+      border: 3px solid white;
+      border-radius: 999px;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .mini {
+      min-height: 128px;
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 14px;
+      background: white;
+      box-shadow: 5px 5px 0 var(--ink);
+      font-weight: 800;
+    }
+
+    .mini:nth-child(2) { background: var(--green); transform: rotate(1deg); }
+    .mini:nth-child(3) { background: var(--blue); transform: rotate(-1deg); }
+
+    .barrage-board {
+      position: relative;
+      min-height: 230px;
+      margin-top: 26px;
+      border: 4px solid var(--ink);
+      border-radius: 8px;
+      background:
+        linear-gradient(transparent 27px, rgba(23, 23, 23, .08) 28px),
+        linear-gradient(90deg, transparent 27px, rgba(23, 23, 23, .08) 28px),
+        var(--white);
+      background-size: 28px 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .barrage {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      max-width: min(460px, 86vw);
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      background: var(--bg);
+      font-weight: 900;
+      white-space: nowrap;
+      box-shadow: 4px 4px 0 var(--ink);
+      transform: rotate(var(--r));
+      animation: floaty 5s ease-in-out infinite;
+      animation-delay: var(--d);
+    }
+
+    .barrage:nth-child(2n) { border-radius: 8px; }
+    .barrage:nth-child(3n) { color: white; background: var(--red); }
+
+    @keyframes floaty {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -7px; }
+    }
+
+    .kicker {
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 900;
+      opacity: .72;
+    }
+
+    .progress-wrap {
+      margin-bottom: 22px;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      background: white;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 18px;
+      width: 0%;
+      background: var(--red);
+      transition: width .22s ease;
+    }
+
+    .question-card {
+      border: 4px solid var(--ink);
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .question-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 4px solid var(--ink);
+      background: var(--green);
+      font-weight: 900;
+    }
+
+    .question-body { padding: 20px; }
+
+    .question-text {
+      margin: 0 0 18px;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.18;
+      font-weight: 900;
+    }
+
+    .options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 70px;
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 10px;
+      background: var(--white);
+      text-align: left;
+      font-weight: 850;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .option.selected {
+      background: var(--blue);
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .letter {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 3px solid var(--ink);
+      border-radius: 50%;
+      background: var(--pink);
+      font-weight: 900;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .result-layout {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .score-card,
+    .type-card,
+    .breakdown {
+      border: 4px solid var(--ink);
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .score-card {
+      padding: 18px;
+      background: var(--green);
+    }
+
+    .score {
+      margin: 6px 0 8px;
+      font-size: 92px;
+      line-height: .86;
+      font-weight: 900;
+    }
+
+    .score-label {
+      display: inline-block;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      padding: 7px 12px;
+      background: var(--red);
+      color: white;
+      font-weight: 900;
+    }
+
+    .meme-art {
+      position: relative;
+      height: 190px;
+      margin-top: 18px;
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      background: var(--art-bg, var(--pink));
+      overflow: hidden;
+    }
+
+    .meme-art::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(transparent 19px, rgba(23, 23, 23, .12) 20px),
+        linear-gradient(90deg, transparent 19px, rgba(23, 23, 23, .12) 20px);
+      background-size: 20px 20px;
+    }
+
+    .art-person {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      width: 96px;
+      height: 132px;
+      transform: translateX(-50%) rotate(var(--tilt, 0deg));
+      border: 3px solid white;
+      border-radius: 22px 22px 10px 10px;
+      background: #121212;
+      box-shadow: 6px 6px 0 var(--ink);
+      z-index: 2;
+    }
+
+    .art-person::before {
+      content: "";
+      position: absolute;
+      left: 25px;
+      top: 18px;
+      width: 42px;
+      height: 48px;
+      border: 3px solid white;
+      border-radius: 28px 28px 14px 14px;
+      background: #242424;
+    }
+
+    .art-person::after {
+      content: "";
+      position: absolute;
+      left: 30px;
+      top: 51px;
+      width: 34px;
+      height: 17px;
+      border: 3px solid white;
+      border-radius: 0 0 14px 14px;
+      background: #050505;
+    }
+
+    .meme-art.has-image .art-person {
+      display: none;
+    }
+
+    .meme-img {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(1.08) contrast(1.04);
+    }
+
+    .art-chip {
+      position: absolute;
+      z-index: 3;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--green);
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .art-chip.one { left: 14px; top: 16px; transform: rotate(-6deg); }
+    .art-chip.two { right: 14px; top: 52px; background: var(--blue); transform: rotate(5deg); }
+    .art-chip.three { left: 26px; bottom: 22px; background: var(--red); color: white; transform: rotate(4deg); }
+
+    .type-card { overflow: hidden; }
+
+    .type-head {
+      padding: 14px 16px;
+      border-bottom: 4px solid var(--ink);
+      background: var(--pink);
+    }
+
+    .type-body { padding: 18px; }
+
+    .type-code {
+      display: inline-block;
+      margin-bottom: 10px;
+      border: 3px solid var(--ink);
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--blue);
+      font-weight: 900;
+    }
+
+    .type-title {
+      margin: 0;
+      font-size: clamp(38px, 7vw, 68px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+
+    .quote {
+      border-left: 6px solid var(--ink);
+      margin: 16px 0;
+      padding-left: 12px;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .report-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .report-item {
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--white);
+    }
+
+    .report-item strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 16px;
+    }
+
+    .breakdown {
+      grid-column: 1 / -1;
+      padding: 16px;
+      margin-top: 4px;
+    }
+
+    .axis-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .axis {
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--white);
+      font-weight: 850;
+    }
+
+    .axis strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 24px;
+    }
+
+    .axis-label {
+      margin-bottom: 4px;
+      font-size: 14px;
+      opacity: .76;
+    }
+
+    .axis-meter {
+      font-size: 15px;
+    }
+
+    .axis-explain {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: var(--white);
+      font-weight: 900;
+    }
+
+    .library-intro {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .library-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .library-quote {
+      margin: 10px 0 0;
+      font-size: 15px;
+      line-height: 1.7;
+      font-weight: 850;
+    }
+
+    .library-card {
+      border: 3px solid var(--ink);
+      border-radius: 8px;
+      background: white;
+      box-shadow: 5px 5px 0 var(--ink);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .library-card:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 3px 3px 0 var(--ink);
+    }
+
+    .library-card .meme-art {
+      height: 128px;
+      margin: 0;
+      border: 0;
+      border-bottom: 3px solid var(--ink);
+      border-radius: 0;
+    }
+
+    .library-card-body {
+      padding: 12px;
+    }
+
+    .library-card h3 {
+      margin: 4px 0 8px;
+      font-size: 21px;
+      line-height: 1.1;
+    }
+
+    .library-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    details {
+      margin-top: 10px;
+      border-top: 2px dashed var(--ink);
+      padding-top: 8px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 800px) {
+      body { padding: 10px; }
+      main { padding: 16px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .hero,
+      .result-layout,
+      .mini-grid,
+      .axis-grid,
+      .library-grid { grid-template-columns: 1fr; }
+      .library-intro { flex-direction: column; }
+      .barrage-board { min-height: 340px; }
+      .barrage {
+        left: 12px !important;
+        right: 12px;
+        top: var(--mobile-y);
+        white-space: normal;
+      }
+      .figure-card { min-height: 260px; }
+      .figure {
+        width: 145px;
+        height: 205px;
+      }
+      .score { font-size: 74px; }
+      .nav-row { flex-direction: column; }
+      .nav-row .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">HBTI 豪度测验</div>
+    </header>
+
+    <main>
+      <section class="screen active" id="startScreen">
+        <div class="hero">
+          <div>
+            <h1>测测你<br>到底有多豪</h1>
+            <div class="actions">
+              <button class="btn danger" id="startBtn">开始鉴定</button>
+              <button class="btn secondary" id="openLibraryFromStartBtn">先看图鉴</button>
+              <div class="note">别人测 MBTI，我测 HBTI</div>
+            </div>
+          </div>
+          <div class="figure-card has-image" aria-hidden="true">
+            <img class="hero-img" src="./hero-jiahao.jpg" alt="" onerror="this.hidden=true; this.parentElement.classList.remove('has-image')">
+            <div class="figure">
+              <div class="hood"></div>
+              <div class="mask"></div>
+              <div class="body"></div>
+              <div class="deck"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="barrage-board" aria-label="嘉豪语录弹幕">
+          <div class="barrage" style="--x:4%;--y:18px;--mobile-y:16px;--r:-2deg;--d:0s;--bg:var(--green)">别人：早八要迟到了　我：走廊的风在等我</div>
+          <div class="barrage" style="--x:36%;--y:52px;--mobile-y:72px;--r:2deg;--d:-1s;--bg:var(--blue)">我要去操控我的基金股票</div>
+          <div class="barrage" style="--x:12%;--y:96px;--mobile-y:136px;--r:1deg;--d:-2s;--bg:var(--pink)">别人：正常走路　我：无人区慢放</div>
+          <div class="barrage" style="--x:54%;--y:122px;--mobile-y:204px;--r:-3deg;--d:-.5s;--bg:var(--white)">呃，你们懂吧</div>
+          <div class="barrage" style="--x:8%;--y:166px;--mobile-y:258px;--r:3deg;--d:-1.7s;--bg:var(--green)">豪到你了？</div>
+          <div class="barrage" style="--x:42%;--y:180px;--mobile-y:298px;--r:-1deg;--d:-2.6s;--bg:var(--blue)">今天不戴帽，豪意减半</div>
+        </div>
+      </section>
+
+      <section class="screen" id="quizScreen">
+        <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
+        <div class="question-card">
+          <div class="question-head">
+            <span id="questionCount">第 1 / 12 题</span>
+            <span id="questionTag">课间观察</span>
+          </div>
+          <div class="question-body">
+            <p class="question-text" id="questionText"></p>
+            <div class="options" id="options"></div>
+          </div>
+        </div>
+        <div class="nav-row">
+          <button class="btn secondary" id="prevBtn">上一题</button>
+          <button class="btn" id="nextBtn">下一题</button>
+        </div>
+      </section>
+
+      <section class="screen" id="resultScreen">
+        <div class="result-layout">
+          <article class="score-card">
+            <div class="kicker">你的豪度</div>
+            <div class="score" id="scoreText">0</div>
+            <div class="score-label" id="scoreLabel">待鉴定</div>
+            <div class="tag-row" id="evidenceTags"></div>
+            <div id="resultArt"></div>
+          </article>
+
+          <article class="type-card">
+            <div class="type-head">
+              <span class="type-code" id="typeCode">HBTI</span>
+              <h2 class="type-title" id="typeTitle">称号</h2>
+            </div>
+            <div class="type-body">
+              <p class="quote" id="typeQuote"></p>
+              <p id="typeDescription"></p>
+              <div class="report-grid">
+                <div class="report-item">
+                  <strong>典型行为</strong>
+                  <span id="typeBehavior"></span>
+                </div>
+                <div class="report-item">
+                  <strong>朋友相处提示</strong>
+                  <span id="typeTip"></span>
+                </div>
+                <div class="report-item">
+                  <strong>代表语录</strong>
+                  <span id="typeLine"></span>
+                </div>
+              </div>
+              <div class="actions">
+                <button class="btn" id="copyBtn">复制结果</button>
+                <button class="btn secondary" id="openLibraryBtn">查看豪学图鉴</button>
+                <button class="btn danger" id="restartBtn">重新鉴定</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="breakdown">
+            <h3>四维报告</h3>
+            <div class="axis-grid" id="axisGrid"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="screen" id="libraryScreen">
+        <div class="library-intro">
+          <div>
+            <h2>豪学图鉴</h2>
+            <p class="lead">别人：正常走路。我：无人区慢放。</p>
+            <p class="library-quote">豪到你了？呃，你们懂吧。今天不戴帽，豪意减半。我要去操控我的基金股票。</p>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" id="backFromLibraryBtn">返回</button>
+            <button class="btn danger" id="startFromLibraryBtn">开始鉴定</button>
+          </div>
+        </div>
+        <div class="library-grid" id="libraryGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const axisNames = {
+      hy: { H: "显豪", Y: "隐豪" },
+      bw: { B: "本豪", W: "玩豪" },
+      tn: { T: "体豪", N: "脑豪" },
+      zr: { Z: "佐豪", R: "锐豪" }
+    };
+
+    const axisDescriptions = {
+      hy: {
+        H: "你的豪感更容易写在动作、穿搭和登场方式里，别人一眼就能看出你今天状态不一般。",
+        Y: "你的豪感偏暗流型，表面低调，脑内和气场已经先一步进入剧情。"
+      },
+      bw: {
+        B: "你不是单纯玩一下梗，很多时候是真的会认真进入那种豪的情绪和状态。",
+        W: "你很清楚自己在整活，重点不是沉浸到底，而是把这个梗玩得又准又好笑。"
+      },
+      tn: {
+        T: "你的豪主要长在步伐、手势、穿搭和现场动作上，属于看得见的物理豪感。",
+        N: "你的豪主要活在设定、歌单、台词和精神世界里，属于越想越有味的脑内豪感。"
+      },
+      zr: {
+        Z: "你更偏向把豪感变成一起玩的气氛，适合和朋友共同进入状态。",
+        R: "你更擅长观察、鉴定和吐槽，豪学雷达稳定在线，看到样本就想下判断。"
+      }
+    };
+
+    const questions = [
+      {
+        tag: "走廊 BGM",
+        text: "课间走廊突然没人，你耳机里刚好切到一首很有宿命感的歌，你会：",
+        options: [
+          ["正常走过去，怕迟到", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["脑内开场，但表面忍住", 3, { hy: -1, bw: 1, tn: 0, zr: 1 }],
+          ["步速自动变慢，手已经开始找节拍", 7, { hy: 1, bw: 0, tn: 1, zr: 1 }],
+          ["直接进入“没人懂我”的走位模式", 10, { hy: 1, bw: 1, tn: 1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "全黑穿搭",
+        text: "今天降温，你发现自己穿了一身黑，你第一反应是：",
+        options: [
+          ["只是懒得搭配", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["有点帅，但不说", 3, { hy: -1, bw: 1, tn: 1, zr: 1 }],
+          ["想拍一张背影发给朋友", 7, { hy: 1, bw: 0, tn: 1, zr: 1 }],
+          ["觉得命运把外套递到了我手里", 10, { hy: 1, bw: 1, tn: 1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "讲台试音",
+        text: "班里电脑连上投影，老师还没来，你最可能：",
+        options: [
+          ["离远一点，别惹事", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["偷偷想“放点音乐会不会很炸”", 3, { hy: -1, bw: 0, tn: 0, zr: 1 }],
+          ["给朋友放 3 秒 BGM 试水", 7, { hy: 1, bw: -1, tn: 1, zr: 1 }],
+          ["已经站到讲台边，准备虚空打碟", 10, { hy: 1, bw: 1, tn: 1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "被鉴定",
+        text: "朋友说“你刚刚有点嘉豪”，你会：",
+        options: [
+          ["立刻否认，并要求删除记忆", 1, { hy: -1, bw: 1, tn: 0, zr: -1 }],
+          ["嘴上否认，心里开始复盘", 4, { hy: -1, bw: 1, tn: 0, zr: -1 }],
+          ["顺势摆个姿势：“豪到你了？”", 8, { hy: 1, bw: -1, tn: 1, zr: 1 }],
+          ["反过来鉴定他：“你也不低”", 7, { hy: 1, bw: -1, tn: 0, zr: -1 }]
+        ]
+      },
+      {
+        tag: "账号命名",
+        text: "你给游戏或社交账号起名时，更偏向：",
+        options: [
+          ["简单好认就行", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["带一点冷感，但不能太明显", 3, { hy: -1, bw: 1, tn: 0, zr: 1 }],
+          ["要有黑、影、夜、孤、零之类的味道", 7, { hy: 1, bw: 1, tn: -1, zr: 1 }],
+          ["最好像一个组织代号或最终形态", 10, { hy: 1, bw: 1, tn: -1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "雨中慢走",
+        text: "看到别人雨中慢走，你的内心弹幕是：",
+        options: [
+          ["快回去吧，会感冒", 0, { hy: -1, bw: 0, tn: 0, zr: 1 }],
+          ["有点尬，但我懂", 3, { hy: -1, bw: 0, tn: 0, zr: 1 }],
+          ["这步频不够，BGM 没卡上", 6, { hy: 1, bw: -1, tn: 1, zr: -1 }],
+          ["这位同学已经触碰到豪学边界", 8, { hy: 1, bw: -1, tn: -1, zr: -1 }]
+        ]
+      },
+      {
+        tag: "穿搭打分",
+        text: "朋友让你给他的穿搭打分，你会：",
+        options: [
+          ["正常评价好不好看", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["说“挺酷的”，不展开", 2, { hy: -1, bw: 0, tn: 1, zr: 1 }],
+          ["认真指出“帽子、口罩、手势”三项指标", 7, { hy: 1, bw: -1, tn: 1, zr: -1 }],
+          ["直接给出“轻度/中度/赛级”评级", 9, { hy: 1, bw: -1, tn: -1, zr: -1 }]
+        ]
+      },
+      {
+        tag: "自我介绍",
+        text: "你最能接受哪种自我介绍：",
+        options: [
+          ["大家好，我叫某某。", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["我比较慢热。", 3, { hy: -1, bw: 1, tn: 0, zr: 1 }],
+          ["我平时不太说话，但我都看着。", 7, { hy: -1, bw: 1, tn: -1, zr: 1 }],
+          ["有些人注定要在沉默中登场。", 10, { hy: 1, bw: 1, tn: -1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "刷到视频",
+        text: "你刷到嘉豪相关视频时，通常会：",
+        options: [
+          ["看一眼划走", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["笑一下，想起某些同学", 3, { hy: -1, bw: -1, tn: 0, zr: 1 }],
+          ["转给朋友：“这不你吗”", 6, { hy: 1, bw: -1, tn: 0, zr: -1 }],
+          ["开始研究这属于哪个嘉豪亚型", 8, { hy: 1, bw: -1, tn: -1, zr: -1 }]
+        ]
+      },
+      {
+        tag: "结果图偏好",
+        text: "如果要拍一张结果分享图，你希望自己看起来：",
+        options: [
+          ["清爽正常，不要太抽象", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["有点好笑，但别太社死", 3, { hy: -1, bw: -1, tn: 0, zr: 1 }],
+          ["越像班级公示栏越好", 7, { hy: 1, bw: -1, tn: 1, zr: 1 }],
+          ["像某种神秘组织认证照", 9, { hy: 1, bw: 1, tn: -1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "耍帅冲动",
+        text: "当你真的很想耍帅时，你会：",
+        options: [
+          ["克制，成年人要体面", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["只在脑内演完", 3, { hy: -1, bw: 1, tn: -1, zr: 1 }],
+          ["找朋友配合，整一小段", 7, { hy: 1, bw: -1, tn: 1, zr: 1 }],
+          ["不需要配合，场地本身会理解我", 10, { hy: 1, bw: 1, tn: 1, zr: 1 }]
+        ]
+      },
+      {
+        tag: "豪学态度",
+        text: "你对“豪”的态度最接近：",
+        options: [
+          ["我不豪，我只是路过", 0, { hy: -1, bw: 0, tn: 0, zr: 0 }],
+          ["我可能有一点，但不承认", 3, { hy: -1, bw: 1, tn: 0, zr: 1 }],
+          ["豪是一种青春残响，可以玩", 7, { hy: 1, bw: -1, tn: 0, zr: 1 }],
+          ["万物皆可豪，只是程度不同", 10, { hy: 1, bw: 1, tn: -1, zr: -1 }]
+        ]
+      }
+    ];
+
+    const typeData = {
+      HBTZ: {
+        title: "自在极意豪",
+        quote: "你不是在模仿嘉豪，你是在让嘉豪学会自由。",
+        description: "你的豪感属于自然流露型。别人需要找角度、等灯光、配 BGM，你只要站在那里，空气就会自动切到慢动作。你不太担心被朋友笑，因为你知道整活的最高境界不是装作很帅，而是帅和好笑同时成立。",
+        behavior: "走廊自动压步速，讲台边缘会短暂变成 DJ 台，黑色外套是常驻装备。",
+        tip: "朋友可以大胆接梗，但不要试图阻止你登场。越拦，越像给你加了一个开场动画。",
+        line: "别人：快上课了。我：风还没停。",
+        art: ["var(--green)", "BGM", "走廊", "极意"]
+      },
+      HBTR: {
+        title: "赛级嘉豪",
+        quote: "登场已经不是爱好，是稳定发挥。",
+        description: "你是竞技型豪感选手，动作、穿搭、表情管理都很成熟。你不仅自己豪，还会根据别人的帽檐角度、沉默时长、手势幅度给出专业评分。你的问题不是不够自然，而是太像有训练痕迹。",
+        behavior: "出门前会下意识确认外套、口罩、耳机三件套，朋友一喊你就能进入状态。",
+        tip: "适合让你当整活导演，但最好给你限时，不然一次课间能拍成三集。",
+        line: "别人：你怎么又开始了。我：这是稳定发挥。",
+        art: ["var(--red)", "评级", "帽檐", "赛级"]
+      },
+      HBNZ: {
+        title: "豪中天帝",
+        quote: "身体可以不动，世界观必须完整。",
+        description: "你的豪感主要发生在精神宇宙。你可能没有真的虚空打碟，但你已经给自己的沉默、头像、ID、歌单和出场方式建立了一整套解释系统。别人看到的是普通同学，你看到的是正在加载的最终形态。",
+        behavior: "起名偏爱黑、影、夜、零，聊天时偶尔冒出像设定集一样的句子。",
+        tip: "朋友不要急着打断你的设定，只要问一句“然后呢”，你会自己把世界观补完。",
+        line: "别人：你在想什么。我：在校准我的时间线。",
+        art: ["var(--blue)", "设定", "代号", "天帝"]
+      },
+      HBNR: {
+        title: "豪学评论家",
+        quote: "普通人看热闹，你负责写鉴定报告。",
+        description: "你不是最想登场的人，但你一定是最会解释登场的人。一个转身、一件外套、一段沉默，在你眼里都能拆出豪学成分。你擅长把朋友的普通行为讲成亚型样本，语气越认真越好笑。",
+        behavior: "看到视频会暂停分析，看到同学慢走会默默标注“疑似脑豪偏锐”。",
+        tip: "朋友被你鉴定时可能会破防，记得补一句“这是学术讨论”。",
+        line: "别人：他只是走得慢。我：不，他在释放信号。",
+        art: ["var(--pink)", "鉴定", "样本", "锐评"]
+      },
+      HWTZ: {
+        title: "逍遥豪",
+        quote: "我知道我在豪，但我豪得很快乐。",
+        description: "你最健康的一点是自知。你知道这个动作有点抽象，也知道朋友会笑，但这正是它好玩的地方。你不是被豪感控制，而是在合适的朋友、合适的课间、合适的 BGM 里主动打开娱乐模式。",
+        behavior: "会主动配合拍梗图，也会在朋友笑够之后自然收场。",
+        tip: "和你玩最轻松，因为你不会强迫别人懂，只会把气氛拽起来。",
+        line: "别人：你不尴尬吗。我：尴尬也是节拍的一部分。",
+        art: ["var(--green)", "快乐", "整活", "逍遥"]
+      },
+      HWTR: {
+        title: "玩梗嘉豪",
+        quote: "豪到你了？那就对了。",
+        description: "你把嘉豪当成一种朋友间的社交暗号。你出手很快，包袱也准，擅长在群聊里把普通场景改造成豪学现场。你的豪感并不沉重，更多是会心一笑的互损和即兴表演。",
+        behavior: "常用“这不你吗”“豪到你了”开团，看到素材会第一时间转发。",
+        tip: "朋友可以反击你，因为你通常接得住。你越被反鉴定，场面越热闹。",
+        line: "别人：这不你吗。我：别急，下一个就是你。",
+        art: ["var(--red)", "豪到", "转发", "开团"]
+      },
+      HWNZ: {
+        title: "拟态豪",
+        quote: "表面正常，内心已响起 BGM。",
+        description: "你平时看起来没什么问题，但脑内经常会给普通日常自动配乐。你不一定真的表演，却很容易在某个光线、某阵风、某首歌里突然理解嘉豪。你的豪味像隐藏彩蛋，熟人才看得见。",
+        behavior: "外表淡定，内心剪辑；嘴上说算了，脑子里已经完成分镜。",
+        tip: "朋友可以用一句“你刚刚是不是在脑内演了”精准击中你。",
+        line: "别人：你怎么不说话。我：刚才那段已经剪完了。",
+        art: ["var(--blue)", "拟态", "内心", "BGM"]
+      },
+      HWNR: {
+        title: "薛定谔的豪",
+        quote: "你既在豪，又在旁边看自己豪。",
+        description: "你处在玩梗和观察之间。你会主动加入整活，也会立刻抽离出来分析这件事为什么好笑。你不是摇摆不定，而是双线程运行：一个线程负责豪，一个线程负责吐槽自己正在豪。",
+        behavior: "一边拍梗图一边说“这太抽象了”，说完还要再拍一张。",
+        tip: "朋友不要追问你到底站哪边，因为你会回答“看版本”。",
+        line: "别人：你到底豪不豪。我：取决于观测方式。",
+        art: ["var(--pink)", "观测", "坍缩", "双态"]
+      },
+      YBTZ: {
+        title: "身在豪中不知豪",
+        quote: "本人觉得很正常，旁人已经看见帽檐下的光。",
+        description: "你最大的特点是真诚无辜。你并不觉得自己在整活，也没有刻意表演，但很多选择已经形成完整证据链。穿黑是巧合，慢走是巧合，歌单也是巧合，只是巧合多到朋友很难不笑。",
+        behavior: "被点名时第一反应是“啊？这也算？”，然后又做出一个更算的动作。",
+        tip: "朋友调侃你时语气要轻一点。你不是装傻，你是真的没意识到。",
+        line: "别人：你很嘉豪。我：我只是正常走路。",
+        art: ["var(--green)", "证据", "无辜", "不知豪"]
+      },
+      YBTR: {
+        title: "破防嘉豪",
+        quote: "你越说没有，豪度越有。",
+        description: "你对“被鉴定”很敏感，因为你确实不想承认自己有豪味。但越认真解释，越像在给结果补材料。你不是不能玩梗，只是需要一点缓冲时间，从“别乱说”过渡到“好吧有一点”。",
+        behavior: "否认速度很快，复盘时间很长，偶尔会偷偷问朋友“刚才真有那么明显吗”。",
+        tip: "朋友别追着你贴标签，给你台阶，你会自己下来。",
+        line: "别人：急了。我：我没有急，我只是在澄清。",
+        art: ["var(--red)", "澄清", "急了", "破防"]
+      },
+      YBNZ: {
+        title: "隐世文豪",
+        quote: "你不登场，你写登场设定。",
+        description: "你低调、慢热，不太会在现实里大幅度表演，但你的精神世界很满。你的签名、头像、歌单、收藏夹里偶尔会露出一点命运感。你不负责制造名场面，你负责给名场面写旁白。",
+        behavior: "喜欢意味深长的句子，收藏过几首“适合独自走路”的歌。",
+        tip: "朋友可以问你的歌单，但要做好听到一段长解释的准备。",
+        line: "别人：你怎么这么安静。我：文字已经替我说了。",
+        art: ["var(--blue)", "旁白", "歌单", "隐世"]
+      },
+      YBNR: {
+        title: "暗中鉴豪师",
+        quote: "你站在人群后排，雷达却一直开着。",
+        description: "你平时不表演，也不抢镜，但识别能力非常强。别人一个慢动作、一句台词、一套黑衣，你已经在心里完成分类。你像班级里的沉默观察员，不开口则已，一开口就是精准鉴定。",
+        behavior: "群聊里潜水很久，突然发一句“这个是隐豪偏脑豪”。",
+        tip: "朋友可以请你做裁判，但别忘了你自己也在图鉴里。",
+        line: "别人：你怎么知道。我：样本见多了。",
+        art: ["var(--pink)", "雷达", "潜水", "样本"]
+      },
+      YWTZ: {
+        title: "轻度豪友",
+        quote: "有一点点中二，有一点点好笑。",
+        description: "你是最安全的轻豪体质。能接梗，能自嘲，也不会过度上头。你身上的豪味更像青春期残留的小贴纸，不影响正常生活，但在朋友局里会突然闪一下。",
+        behavior: "偶尔配合整活，结束后立刻回到正常频道。",
+        tip: "朋友和你玩梗最舒服，因为你知道什么时候开始，也知道什么时候停。",
+        line: "别人：来一下？我：只来三秒。",
+        art: ["var(--green)", "轻度", "三秒", "友好"]
+      },
+      YWTR: {
+        title: "骑墙派嘉豪",
+        quote: "今天笑别人豪，明天发现自己也不低。",
+        description: "你在鉴定别人和保护自己之间反复横跳。你很会发现朋友的豪味，也很会把自己摘出去，可惜有时摘得太用力，反而暴露了熟练度。你不是墙头草，你是双向观察员。",
+        behavior: "转发别人梗图时很积极，被反问“你呢”时立刻切换话题。",
+        tip: "朋友可以用你的原话回敬你，这通常会获得奇效。",
+        line: "别人：你也差不多。我：我们讨论的是他。",
+        art: ["var(--red)", "切题", "骑墙", "反问"]
+      },
+      YWNZ: {
+        title: "低糖嘉豪",
+        quote: "豪味很淡，主要是青春残响。",
+        description: "你并不强烈，也不太外放。你的豪感更多来自偶尔的脑内小剧场：听到某首歌、看到某个背影、遇到某段空走廊，会短暂闪过一点中二，但很快又回到普通生活。",
+        behavior: "只在心情、天气、BGM 三项同时满足时，出现轻微加戏。",
+        tip: "朋友不要强行把你推上台，你适合被温柔地调侃。",
+        line: "别人：你刚才是不是想演。我：想了一下，没演。",
+        art: ["var(--blue)", "低糖", "闪过", "没演"]
+      },
+      YWNR: {
+        title: "反向嘉豪",
+        quote: "看似最不豪，却已经被豪学污染。",
+        description: "你不太表演，也不太承认，甚至可能觉得自己只是旁观者。但问题在于：你太懂怎么识别嘉豪了。知道太多，本身也是一种豪。你像豪学的反面教材，嘴上说不要，脑内已经建好分类表。",
+        behavior: "最常说“别搞这些”，但别人问你类型时，你又能讲得头头是道。",
+        tip: "朋友可以温柔提醒你：真正的路人不会懂这么多术语。",
+        line: "别人：你懂好多。我：我只是被迫了解。",
+        art: ["var(--pink)", "反向", "污染", "路人"]
+      }
+    };
+
+    const typeImages = {
+      HBTZ: "https://img2.baidu.com/it/u=2076921033,3340739903&fm=253&fmt=auto&app=120&f=JPEG?w=888&h=500",
+      HBTR: "https://img2.baidu.com/it/u=3191902909,4072812609&fm=253&fmt=auto&app=120&f=JPEG?w=697&h=500",
+      HBNZ: "https://img2.baidu.com/it/u=2943561891,3693203834&fm=253&fmt=auto&app=120&f=JPEG?w=888&h=500",
+      HBNR: "https://img2.baidu.com/it/u=3858232171,306376565&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      HWTZ: "https://img1.baidu.com/it/u=3379633509,2711978103&fm=253&fmt=auto&app=120&f=JPEG?w=667&h=500",
+      HWTR: "https://img0.baidu.com/it/u=2210679749,1974087076&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      HWNZ: "https://img0.baidu.com/it/u=904490372,2326681888&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500",
+      HWNR: "https://img0.baidu.com/it/u=4248452887,651480593&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      YBTZ: "https://img1.baidu.com/it/u=1122720008,859451929&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      YBTR: "https://img1.baidu.com/it/u=88889113,911079158&fm=253&fmt=auto&app=120&f=JPEG?w=500&h=667",
+      YBNZ: "https://img2.baidu.com/it/u=1004806087,3764816701&fm=253&fmt=auto&app=120&f=JPEG?w=667&h=500",
+      YBNR: "https://img2.baidu.com/it/u=4161944225,3145464316&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500",
+      YWTZ: "https://img1.baidu.com/it/u=404580750,1528835102&fm=253&fmt=auto&app=120&f=JPEG?w=520&h=500",
+      YWTR: "https://img2.baidu.com/it/u=3643728659,2625757343&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1426",
+      YWNZ: "https://img2.baidu.com/it/u=3462343814,2365437832&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=1242",
+      YWNR: "https://img0.baidu.com/it/u=3065522155,1369389802&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"
+    };
+
+    const state = {
+      index: 0,
+      answers: Array(questions.length).fill(null)
+    };
+    let lastResult = null;
+    let previousScreen = "start";
+    let currentScreen = "start";
+
+    const startScreen = document.querySelector("#startScreen");
+    const quizScreen = document.querySelector("#quizScreen");
+    const resultScreen = document.querySelector("#resultScreen");
+    const libraryScreen = document.querySelector("#libraryScreen");
+    const progress = document.querySelector("#progress");
+    const questionCount = document.querySelector("#questionCount");
+    const questionTag = document.querySelector("#questionTag");
+    const questionText = document.querySelector("#questionText");
+    const optionsEl = document.querySelector("#options");
+    const prevBtn = document.querySelector("#prevBtn");
+    const nextBtn = document.querySelector("#nextBtn");
+    const copyBtn = document.querySelector("#copyBtn");
+    const libraryGrid = document.querySelector("#libraryGrid");
+
+    renderLibrary();
+
+    document.querySelector("#startBtn").addEventListener("click", () => {
+      showScreen("quiz");
+      renderQuestion();
+    });
+
+    document.querySelector("#openLibraryFromStartBtn").addEventListener("click", () => {
+      previousScreen = "start";
+      showScreen("library");
+    });
+
+    document.querySelector("#openLibraryBtn").addEventListener("click", () => {
+      previousScreen = "result";
+      showScreen("library");
+    });
+
+    document.querySelector("#backFromLibraryBtn").addEventListener("click", () => {
+      showScreen(previousScreen === "result" && lastResult ? "result" : "start");
+    });
+
+    document.querySelector("#startFromLibraryBtn").addEventListener("click", () => {
+      restartQuiz("quiz");
+    });
+
+    document.querySelector("#restartBtn").addEventListener("click", () => {
+      restartQuiz("start");
+    });
+
+    libraryGrid.addEventListener("click", event => {
+      if (event.target.closest("summary")) return;
+      const card = event.target.closest(".library-card");
+      if (!card) return;
+      openLibraryResult(card.dataset.type);
+    });
+
+    copyBtn.addEventListener("click", async () => {
+      if (!lastResult) return;
+      const text = buildShareText(lastResult);
+      try {
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = "已复制";
+      } catch (error) {
+        fallbackCopy(text);
+        copyBtn.textContent = "已复制";
+      }
+      setTimeout(() => {
+        copyBtn.textContent = "复制结果";
+      }, 1200);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (state.index > 0) {
+        state.index -= 1;
+        renderQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (state.answers[state.index] === null) {
+        nextBtn.textContent = "先选一个";
+        setTimeout(updateNav, 800);
+        return;
+      }
+      if (state.index === questions.length - 1) {
+        renderResult();
+        showScreen("result");
+      } else {
+        state.index += 1;
+        renderQuestion();
+      }
+    });
+
+    function showScreen(name) {
+      currentScreen = name;
+      startScreen.classList.toggle("active", name === "start");
+      quizScreen.classList.toggle("active", name === "quiz");
+      resultScreen.classList.toggle("active", name === "result");
+      libraryScreen.classList.toggle("active", name === "library");
+      window.scrollTo(0, 0);
+    }
+
+    function restartQuiz(targetScreen) {
+      state.index = 0;
+      state.answers = Array(questions.length).fill(null);
+      lastResult = null;
+      if (targetScreen === "quiz") {
+        showScreen("quiz");
+        renderQuestion();
+      } else {
+        showScreen("start");
+      }
+    }
+
+    function renderQuestion() {
+      const question = questions[state.index];
+      const selected = state.answers[state.index];
+      questionCount.textContent = `第 ${state.index + 1} / ${questions.length} 题`;
+      questionTag.textContent = question.tag;
+      questionText.textContent = question.text;
+      progress.style.width = `${(state.index / questions.length) * 100}%`;
+      optionsEl.innerHTML = "";
+
+      question.options.forEach((option, optionIndex) => {
+        const button = document.createElement("button");
+        button.className = `option${selected === optionIndex ? " selected" : ""}`;
+        button.type = "button";
+        button.innerHTML = `<span class="letter">${"ABCD"[optionIndex]}</span><span>${option[0]}</span>`;
+        button.addEventListener("click", () => {
+          state.answers[state.index] = optionIndex;
+          renderQuestion();
+        });
+        optionsEl.appendChild(button);
+      });
+
+      updateNav();
+    }
+
+    function updateNav() {
+      prevBtn.disabled = state.index === 0;
+      prevBtn.classList.toggle("hidden", state.index === 0);
+      nextBtn.textContent = state.index === questions.length - 1 ? "查看结果" : "下一题";
+      progress.style.width = `${((state.index + (state.answers[state.index] !== null ? 1 : 0)) / questions.length) * 100}%`;
+    }
+
+    function renderResult() {
+      const totals = { hy: 0, bw: 0, tn: 0, zr: 0 };
+      let rawScore = 0;
+      const chosenTexts = [];
+
+      state.answers.forEach((answerIndex, questionIndex) => {
+        const selected = questions[questionIndex].options[answerIndex];
+        rawScore += selected[1];
+        chosenTexts.push(selected[0]);
+        Object.entries(selected[2]).forEach(([axis, value]) => {
+          totals[axis] += value;
+        });
+      });
+
+      const maxRawScore = questions.reduce((total, question) => {
+        return total + Math.max(...question.options.map(option => option[1]));
+      }, 0);
+      const score = Math.round((rawScore / maxRawScore) * 100);
+      const type = [
+        totals.hy >= 0 ? "H" : "Y",
+        totals.bw >= 0 ? "B" : "W",
+        totals.tn >= 0 ? "T" : "N",
+        totals.zr >= 0 ? "Z" : "R"
+      ].join("");
+      const data = typeData[type];
+      applyResult({ score, type, data, totals, chosenTexts });
+    }
+
+    function applyResult(result) {
+      lastResult = result;
+      document.querySelector("#scoreText").textContent = result.score;
+      document.querySelector("#scoreLabel").textContent = getScoreLabel(result.score);
+      document.querySelector("#typeCode").textContent = `HBTI: ${result.type}`;
+      document.querySelector("#typeTitle").textContent = result.data.title;
+      document.querySelector("#typeQuote").textContent = result.data.quote;
+      document.querySelector("#typeDescription").textContent = result.data.description;
+      document.querySelector("#typeBehavior").textContent = result.data.behavior;
+      document.querySelector("#typeTip").textContent = result.data.tip;
+      document.querySelector("#typeLine").textContent = result.data.line;
+      document.querySelector("#resultArt").innerHTML = renderMemeArt(result.type, result.data, false);
+
+      renderTags(result.score, result.type, result.chosenTexts);
+      renderAxes(result.type, result.totals);
+    }
+
+    function buildLibraryResult(type) {
+      const data = typeData[type];
+      const totals = {
+        hy: type[0] === "H" ? 8 : -8,
+        bw: type[1] === "B" ? 8 : -8,
+        tn: type[2] === "T" ? 8 : -8,
+        zr: type[3] === "Z" ? 8 : -8
+      };
+      const score = Math.max(18, Math.min(98,
+        56
+        + (type[0] === "H" ? 12 : -10)
+        + (type[1] === "B" ? 14 : -8)
+        + (type[2] === "T" ? 8 : -4)
+        + (type[3] === "Z" ? 4 : 0)
+      ));
+      const chosenTexts = [];
+
+      if (type.includes("T")) chosenTexts.push("虚空打碟");
+      if (type.includes("R")) chosenTexts.push("豪学");
+
+      return { score, type, data, totals, chosenTexts };
+    }
+
+    function openLibraryResult(type) {
+      const result = buildLibraryResult(type);
+      applyResult(result);
+      showScreen("result");
+    }
+
+    function getScoreLabel(score) {
+      if (score < 20) return "未检出明显豪味";
+      if (score < 40) return "轻度豪友";
+      if (score < 60) return "中度嘉豪化";
+      if (score < 80) return "重度嘉豪化";
+      return "赛级豪感预警";
+    }
+
+    function renderTags(score, type, chosenTexts) {
+      const tags = document.querySelector("#evidenceTags");
+      const evidence = [];
+      if (score >= 70) evidence.push("走廊自带 BGM");
+      if (type.includes("H")) evidence.push("外显登场");
+      if (type.includes("Y")) evidence.push("暗中有味");
+      if (type.includes("B")) evidence.push("真情实感");
+      if (type.includes("W")) evidence.push("自知玩梗");
+      if (chosenTexts.some(text => text.includes("虚空打碟"))) evidence.push("虚空打碟倾向");
+      if (chosenTexts.some(text => text.includes("豪学"))) evidence.push("豪学污染");
+      tags.innerHTML = evidence.slice(0, 5).map(tag => `<span class="tag">${tag}</span>`).join("");
+    }
+
+    function renderAxes(type, totals) {
+      const axisGrid = document.querySelector("#axisGrid");
+      const axes = [
+        ["hy", type[0], "外显程度"],
+        ["bw", type[1], "本真程度"],
+        ["tn", type[2], "豪感来源"],
+        ["zr", type[3], "社交姿态"]
+      ];
+      axisGrid.innerHTML = axes.map(([axis, letter, label]) => {
+        const names = axisNames[axis];
+        const description = axisDescriptions[axis][letter];
+        const opposite = Object.keys(names).find(key => key !== letter);
+        const strength = Math.min(100, Math.round((Math.abs(totals[axis]) / 12) * 100));
+        return `
+          <div class="axis">
+            <strong>${letter} · ${names[letter]}</strong>
+            <div class="axis-label">${label}</div>
+            <div class="axis-meter">${names[letter]} ${strength}% / ${names[opposite]} ${100 - strength}%</div>
+            <div class="axis-explain">${description}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderMemeArt(type, data, compact) {
+      const [bg, one, two, three] = data.art;
+      const tilt = type.includes("H") ? "-3deg" : "3deg";
+      const smallClass = compact ? " compact" : "";
+      const image = typeImages[type];
+      const imageClass = image ? " has-image" : "";
+      const imageMarkup = image
+        ? `<img class="meme-img" src="${escapeHtml(image)}" alt="${escapeHtml(data.title)}梗图" loading="lazy" referrerpolicy="no-referrer" onerror="this.hidden=true; this.parentElement.classList.remove('has-image')">`
+        : "";
+      return `
+        <div class="meme-art${smallClass}${imageClass}" style="--art-bg:${bg};--tilt:${tilt}">
+          ${imageMarkup}
+          <div class="art-chip one">${escapeHtml(one)}</div>
+          <div class="art-chip two">${escapeHtml(two)}</div>
+          <div class="art-chip three">${escapeHtml(three)}</div>
+          <div class="art-person" aria-hidden="true"></div>
+        </div>
+      `;
+    }
+
+    function renderLibrary() {
+      libraryGrid.innerHTML = Object.entries(typeData).map(([type, data]) => `
+        <article class="library-card" data-type="${type}">
+          ${renderMemeArt(type, data, true)}
+          <div class="library-card-body">
+            <div class="type-code">HBTI: ${type}</div>
+            <h3>${escapeHtml(data.title)}</h3>
+            <p>${escapeHtml(data.quote)}</p>
+            <details>
+              <summary>展开报告</summary>
+              <p>${escapeHtml(data.description)}</p>
+              <p><strong>典型行为：</strong>${escapeHtml(data.behavior)}</p>
+              <p><strong>代表语录：</strong>${escapeHtml(data.line)}</p>
+            </details>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function buildShareText(result) {
+      return [
+        `我的 HBTI 是 ${result.type}：${result.data.title}`,
+        `豪度：${result.score}/100（${getScoreLabel(result.score)}）`,
+        result.data.quote,
+        `典型行为：${result.data.behavior}`,
+        "来测测你到底有多豪。"
+      ].join("\n");
+    }
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+  </script>
+</body>
+</html>
