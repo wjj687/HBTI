@@ -1305,7 +1305,7 @@
     }
 
     function renderResult() {
-      const totals = { hy: 0, bw: 0, tn: 0, zr: 0 };
+      const rawTotals = { hy: 0, bw: 0, tn: 0, zr: 0 };
       let rawScore = 0;
       const chosenTexts = [];
 
@@ -1314,7 +1314,7 @@
         rawScore += selected[1];
         chosenTexts.push(selected[0]);
         Object.entries(selected[2]).forEach(([axis, value]) => {
-          totals[axis] += value;
+          rawTotals[axis] += value;
         });
       });
 
@@ -1323,13 +1323,20 @@
       }, 0);
       const score = Math.round((rawScore / maxRawScore) * 100);
       const type = [
-        totals.hy >= 0 ? "H" : "Y",
-        totals.bw >= 0 ? "B" : "W",
-        totals.tn >= 0 ? "T" : "N",
-        totals.zr >= 0 ? "Z" : "R"
+        rawTotals.hy >= 0 ? "H" : "Y",
+        rawTotals.bw >= 0 ? "B" : "W",
+        rawTotals.tn >= 0 ? "T" : "N",
+        rawTotals.zr >= 0 ? "Z" : "R"
       ].join("");
-      const data = typeData[type];
-      applyResult({ score, type, data, totals, chosenTexts });
+      const canonicalResult = buildLibraryResult(type);
+      applyResult({
+        score,
+        type,
+        data: canonicalResult.data,
+        totals: canonicalResult.totals,
+        chosenTexts,
+        rawTotals
+      });
     }
 
     function applyResult(result) {
